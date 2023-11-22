@@ -7,53 +7,53 @@
   <data:scalar name="Traction" />
   <data:scalar name="Displacement" />
 
-  <mesh name="Surface_Mesh1" dimensions="3">
+  <mesh name="Surface_Mesh1" dimensions="2">
     <use-data name="Traction" />
     <use-data name="Displacement" />
   </mesh>
 
-  <mesh name="Surface_Mesh2" dimensions="3">
+  <mesh name="Surface_Mesh2" dimensions="2">
     <use-data name="Traction" />
     <use-data name="Displacement" />
   </mesh>
 
-  <mesh name="Activation_M1_Mesh" dimensions="3">
+  <mesh name="Activation_M1_Mesh" dimensions="2">
     <use-data name="Activation1" />
   </mesh>
 
-  <mesh name="Activation_M1SM_Mesh" dimensions="3">
+  <mesh name="Activation_M1SM_Mesh" dimensions="2">
     <use-data name="Activation1" />
   </mesh>
 
-  <mesh name="Activation_M2_Mesh" dimensions="3">
+  <mesh name="Activation_M2_Mesh" dimensions="2">
     <use-data name="Activation2" />
   </mesh>
 
-  <mesh name="Activation_M2SM_Mesh" dimensions="3">
+  <mesh name="Activation_M2SM_Mesh" dimensions="2">
     <use-data name="Activation2" />
   </mesh>
 
-  <mesh name="Stretch_M1_Mesh" dimensions="3">
+  <mesh name="Stretch_M1_Mesh" dimensions="2">
     <use-data name="Stretch1" />
   </mesh>
 
-  <mesh name="Stretch_M1SM_Mesh"  dimensions="3">
+  <mesh name="Stretch_M1SM_Mesh"  dimensions="2">
     <use-data name="Stretch1" />
   </mesh>
 
-  <mesh name="Stretch_M2_Mesh" dimensions="3">
+  <mesh name="Stretch_M2_Mesh" dimensions="2">
     <use-data name="Stretch2" />
   </mesh>
 
-  <mesh name="Stretch_M2SM_Mesh" dimensions="3">
+  <mesh name="Stretch_M2SM_Mesh" dimensions="2">
     <use-data name="Stretch2" />
   </mesh>
 
-  <mesh name="Stretch_M2_Cross_Mesh" dimensions="3">
+  <mesh name="Stretch_M2_Cross_Mesh" dimensions="2">
     <use-data name="Stretch1" />
   </mesh>
 
-  <mesh name="Stretch_M1_Cross_Mesh" dimensions="3">
+  <mesh name="Stretch_M1_Cross_Mesh" dimensions="2">
     <use-data name="Stretch2" />
   </mesh>
 
