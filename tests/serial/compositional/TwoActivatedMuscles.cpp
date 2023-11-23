@@ -22,13 +22,13 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
   std::vector<int> surfaceVertexIDs(2);
   std::vector<int> activationVertexIDs(1);
   std::vector<int> stretchVertexIDs(1);
-  std::vector<int> crossStretchVertexIDs(1);
+  // std::vector<int> crossStretchVertexIDs(1);
 
   double timestepSize = 1.0;
 
   if (context.isNamed("M1SM")) {
 
-    participant.setMeshVertices("Surface_Mesh1", surfaceCoords , surfaceVertexIDs );
+    participant.setMeshVertices("Surface_M1SM_Mesh", surfaceCoords , surfaceVertexIDs );
 
     participant.setMeshVertices("Activation_M1SM_Mesh", signalCoords , activationVertexIDs );
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
   } else if (context.isNamed("M2SM")) {
 
-    participant.setMeshVertices("Surface_Mesh2", surfaceCoords , surfaceVertexIDs );
+    participant.setMeshVertices("Surface_M2SM_Mesh", surfaceCoords , surfaceVertexIDs );
 
     participant.setMeshVertices("Activation_M2SM_Mesh", signalCoords , activationVertexIDs );
 
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
     participant.setMeshVertices("Stretch_M1_Mesh", signalCoords , stretchVertexIDs );
 
-    participant.setMeshVertices("Stretch_M1_Cross_Mesh", signalCoords , crossStretchVertexIDs );
+    // participant.setMeshVertices("Stretch_M1_Cross_Mesh", signalCoords , crossStretchVertexIDs );
 
     participant.setMeshVertices("Activation_M1_Mesh", signalCoords , activationVertexIDs );
 
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
     participant.setMeshVertices("Stretch_M2_Mesh", signalCoords , stretchVertexIDs );
 
-    participant.setMeshVertices("Stretch_M2_Cross_Mesh", signalCoords , crossStretchVertexIDs );
+    // participant.setMeshVertices("Stretch_M2_Cross_Mesh", signalCoords , crossStretchVertexIDs );
 
     participant.setMeshVertices("Activation_M2_Mesh", signalCoords , activationVertexIDs );
 
@@ -68,21 +68,37 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
     std::vector<double> tractions{1.2, 3.4};
     std::vector<double> displacements{4.2, 1.4};
+    std::vector<double> activation1{1.0};
+    std::vector<double> activation2{2.0};
+    std::vector<double> stretch1{1.1};
+    std::vector<double> stretch2{2.2};
 
     if (context.isNamed("M1SM")) {
-
-      participant.writeData("Surface_Mesh1","Displacement1", surfaceVertexIDs , displacements );
+      std::vector<double> receivedActivation{0.0};
+      participant.readData( "Activation_M1SM_Mesh","Activation1", activationVertexIDs, timestepSize, receivedActivation );
+      participant.writeData("Stretch_M1SM_Mesh","Stretch1", stretchVertexIDs , stretch1 );
+      participant.writeData("Surface_M1SM_Mesh","Displacement", surfaceVertexIDs , displacements );
 
     } else if (context.isNamed("M2SM")) {
 
       std::vector<double> receivedDisplacements{0.0, 0.0};
-      participant.readData( "SurfaceTendon_Mesh1","Displacement1", surfaceVertexIDs, timestepSize, receivedDisplacements );
+      std::vector<double> receivedActivation{0.0};
+      participant.readData( "Activation_M2SM_Mesh","Activation2", activationVertexIDs, timestepSize, receivedActivation );
+      participant.writeData("Stretch_M2SM_Mesh","Stretch2", stretchVertexIDs , stretch2 );
+      participant.readData( "Surface_M2SM_Mesh","Displacement", surfaceVertexIDs, timestepSize, receivedDisplacements );
       BOOST_TEST(receivedDisplacements == displacements, boost::test_tools::per_element());
 
     } else if (context.isNamed("M1")) {
+      std::vector<double> receivedStretch{0.0};
+      participant.readData( "Stretch_M1_Mesh","Stretch1", stretchVertexIDs, timestepSize, receivedStretch );
+      participant.writeData("Activation_M1_Mesh","Activation1", activationVertexIDs , activation1 );
 
     } else {
       BOOST_TEST(context.isNamed("M2"));
+      std::vector<double> receivedStretch{0.0};
+      participant.readData( "Stretch_M2_Mesh","Stretch2", stretchVertexIDs, timestepSize, receivedStretch );
+      participant.writeData("Activation_M2_Mesh","Activation2", activationVertexIDs , activation2 );
+
     }
 
     std::cout << "Before advance" << std::endl;
