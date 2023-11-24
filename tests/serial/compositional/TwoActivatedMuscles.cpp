@@ -115,8 +115,15 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
     }
 
     std::cout << "Before advance" << std::endl;
+    
+    if (participant.requiresWritingCheckpoint()) {
+    }
     participant.advance(timestepSize);
+    if (participant.requiresReadingCheckpoint()){
+    }
   }
+  
+  participant.finalize();
 }
 
 BOOST_AUTO_TEST_SUITE_END() // Integration
