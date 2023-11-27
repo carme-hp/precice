@@ -68,7 +68,7 @@
     <read-data name="Traction2" mesh="SurfaceTendon_M2SM_Mesh" />
   </participant>
 
-  <m2n:sockets acceptor="M1SM" connector="Tendon" />
+  <m2n:sockets acceptor="Tendon" connector="M1SM" />
   <m2n:sockets acceptor="Tendon" connector="M2SM" />
 
   <coupling-scheme:multi>

@@ -40,29 +40,23 @@ BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
 
   }
 
-  participant.initialize();
-
-  for (int timestep = 0; timestep < 2; ++timestep) {
-
     std::vector<double> tractions1{1.2, 3.4};
     std::vector<double> displacements1{4.2, 1.4};
     std::vector<double> tractions2{1.2, 3.7};
     std::vector<double> displacements2{4.1, 1.4};
+    std::vector<double> receivedDisplacements{0.0, 0.0};
+
+  participant.initialize();
+
+  for (int timestep = 0; timestep < 2; ++timestep) {
 
     if (context.isNamed("M1SM")) {
-     
-      participant.writeData("Surface_M1SM_Mesh","Displacement1", surface1VertexIDs , displacements1 );
-
+        participant.writeData("Surface_M1SM_Mesh","Displacement1", surface1VertexIDs , displacements1 );
     } else if (context.isNamed("Tendon")) {
-
-      std::vector<double> receivedDisplacements{0.0, 0.0};
       participant.readData("SurfaceTendon_M1SM_Mesh","Displacement1", surface1VertexIDs, timestepSize, receivedDisplacements );
-      BOOST_TEST(receivedDisplacements == displacements1, boost::test_tools::per_element());
-
     } else {
       BOOST_TEST(context.isNamed("M2SM"));
     }
-
     std::cout << "Before advance" << std::endl;
     if (participant.requiresWritingCheckpoint()) {
     }
@@ -71,6 +65,11 @@ BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
     }  
 
   }
+
+  // Test read and write
+  if (context.isNamed("Tendon")) {
+    BOOST_TEST(receivedDisplacements == displacements1, boost::test_tools::per_element());
+  } 
 }
 
 BOOST_AUTO_TEST_SUITE_END() // Integration
