@@ -9,22 +9,32 @@
 BOOST_AUTO_TEST_SUITE(Integration)
 BOOST_AUTO_TEST_SUITE(Serial)
 BOOST_AUTO_TEST_SUITE(Compositional)
-BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
+BOOST_AUTO_TEST_CASE(TwoMusclesOneTendonActivated)
 {
-  PRECICE_TEST("M1SM"_on(1_rank), "M2SM"_on(1_rank), "Tendon"_on(1_rank));
+  PRECICE_TEST("M1SM"_on(1_rank), "M2SM"_on(1_rank), "Tendon"_on(1_rank), "M1"_on(1_rank));
 
   precice::Participant participant(context.name, context.config(), context.rank, context.size);
 
   const std::vector<double> surfaceCoords{1, 0, 2, 0};
+  const std::vector<double> neuralCoords{0, 0};
 
   std::vector<int> surface1VertexIDs(2);
   std::vector<int> surface2VertexIDs(2);
+  std::vector<int> activationVertexIDs(1);
 
   double timestepSize = 1.0;
+ 
+  if (context.isNamed("M1")){
 
-  if (context.isNamed("M1SM")) {
+    participant.setMeshVertices("Activation_M1_Mesh", neuralCoords , activationVertexIDs );
+
+  }
+  else if (context.isNamed("M1SM")) {
 
     participant.setMeshVertices("Surface_M1SM_Mesh", surfaceCoords , surface1VertexIDs );
+
+    participant.setMeshVertices("Activation_M1SM_Mesh", neuralCoords , activationVertexIDs );
+
 
   } else if (context.isNamed("M2SM")) {
 
@@ -39,6 +49,8 @@ BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
 
   }
 
+    std::vector<double> activation1{1.0};
+    std::vector<double> receivedActivation1{0.0};
     std::vector<double> tractions1{1.2, 3.4};
     std::vector<double> displacements1{4.2, 1.4};
     std::vector<double> tractions2{1.2, 3.7};
@@ -49,8 +61,12 @@ BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
 
   for (int timestep = 0; timestep < 2; ++timestep) {
 
-    if (context.isNamed("M1SM")) {
-        participant.writeData("Surface_M1SM_Mesh","Displacement1", surface1VertexIDs , displacements1 );
+    if (context.isNamed("M1")){
+      participant.writeData("Activation_M1_Mesh","Activation1", activationVertexIDs , activation1 );
+    } else if (context.isNamed("M1SM")) {
+      participant.readData( "Activation_M1SM_Mesh","Activation1", activationVertexIDs, timestepSize, receivedActivation1 );
+
+      participant.writeData("Surface_M1SM_Mesh","Displacement1", surface1VertexIDs , displacements1 );
     } else if (context.isNamed("Tendon")) {
       participant.readData("SurfaceTendon_M1SM_Mesh","Displacement1", surface1VertexIDs, timestepSize, receivedDisplacements );
     } else {
@@ -68,7 +84,10 @@ BOOST_AUTO_TEST_CASE(TwoMusclesOneTendon)
   // Test read and write
   if (context.isNamed("Tendon")) {
     BOOST_TEST(receivedDisplacements == displacements1, boost::test_tools::per_element());
-  } 
+  } else if (context.isNamed("M1SM")){
+    BOOST_TEST(receivedActivation1 == activation1, boost::test_tools::per_element());
+
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END() // Integration
