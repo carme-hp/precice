@@ -13,22 +13,20 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 {
   PRECICE_TEST("M1SM"_on(1_rank), "M2SM"_on(1_rank), "M1"_on(1_rank), "M2"_on(1_rank));
 
-  std::cout << "Before constructor" << std::endl;
   precice::Participant participant(context.name, context.config(), context.rank, context.size);
 
-  const std::vector<double> surfaceCoords{1, 0, 2, 0};
+  const std::vector<double> neuralCoords{1, 0, 2, 0};
   const std::vector<double> signalCoords{0, 0};
 
   std::vector<int> surfaceVertexIDs(2);
   std::vector<int> activationVertexIDs(1);
   std::vector<int> stretchVertexIDs(1);
-  // std::vector<int> crossStretchVertexIDs(1);
 
   double timestepSize = 1.0;
 
   if (context.isNamed("M1SM")) {
 
-    participant.setMeshVertices("Surface_M1SM_Mesh", surfaceCoords , surfaceVertexIDs );
+    participant.setMeshVertices("Surface_M1SM_Mesh", neuralCoords , surfaceVertexIDs );
 
     participant.setMeshVertices("Activation_M1SM_Mesh", signalCoords , activationVertexIDs );
 
@@ -36,7 +34,7 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
   } else if (context.isNamed("M2SM")) {
 
-    participant.setMeshVertices("Surface_M2SM_Mesh", surfaceCoords , surfaceVertexIDs );
+    participant.setMeshVertices("Surface_M2SM_Mesh", neuralCoords , surfaceVertexIDs );
 
     participant.setMeshVertices("Activation_M2SM_Mesh", signalCoords , activationVertexIDs );
 
@@ -57,7 +55,6 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
   }
 
-  std::cout << "Before initialize" << std::endl;
   participant.initialize();
 
   for (int timestep = 0; timestep < 2; ++timestep) {
@@ -71,20 +68,20 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
     if (context.isNamed("M1SM")) {
       std::vector<double> receivedActivation{0.0};
-      // participant.readData( "Activation_M1SM_Mesh","Activation1", activationVertexIDs, timestepSize, receivedActivation );
+      participant.readData( "Activation_M1SM_Mesh","Activation1", activationVertexIDs, timestepSize, receivedActivation );
       // participant.writeData("Surface_M1SM_Mesh","Displacement", surfaceVertexIDs , displacements );
       participant.writeData("Stretch_M1SM_Mesh","StretchM1SM", stretchVertexIDs , stretch1 );
 
-      // BOOST_TEST(receivedActivation == activation1, boost::test_tools::per_element());
+      BOOST_TEST(receivedActivation == activation1, boost::test_tools::per_element());
 
     } else if (context.isNamed("M2SM")) {
-      // std::vector<double> receivedDisplacements{0.0, 0.0};
-      // std::vector<double> receivedActivation{0.0};
-      // participant.readData( "Activation_M2SM_Mesh","Activation2", activationVertexIDs, timestepSize, receivedActivation );
+      std::vector<double> receivedDisplacements{0.0, 0.0};
+      std::vector<double> receivedActivation{0.0};
+      participant.readData( "Activation_M2SM_Mesh","Activation2", activationVertexIDs, timestepSize, receivedActivation );
       participant.writeData("Stretch_M2SM_Mesh","StretchM2SM", stretchVertexIDs , stretch2 );
 
       // participant.readData( "Surface_M2SM_Mesh","Displacement", surfaceVertexIDs, timestepSize, receivedDisplacements );
-      // BOOST_TEST(receivedActivation == activation2, boost::test_tools::per_element());
+      BOOST_TEST(receivedActivation == activation2, boost::test_tools::per_element());
       // BOOST_TEST(receivedDisplacements == displacements, boost::test_tools::per_element());
 
     } else if (context.isNamed("M1")) {
@@ -94,8 +91,8 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
       participant.readData( "Stretch_M1_Mesh","StretchM1SM", stretchVertexIDs, timestepSize, receivedStretch );
       participant.readData( "Stretch_M1_Mesh","StretchM2SM", stretchVertexIDs, timestepSize, receivedCrossedStretch );
-
-      // participant.writeData("Activation_M1_Mesh","Activation1", activationVertexIDs , activation1 );
+      std::cout << "activation in M1 = " << activation1[0] << std::endl;
+      participant.writeData("Activation_M1_Mesh","Activation1", activationVertexIDs , activation1 );
       BOOST_TEST(receivedStretch == stretch1, boost::test_tools::per_element());
       BOOST_TEST(receivedCrossedStretch == stretch2, boost::test_tools::per_element());
 
@@ -107,14 +104,12 @@ BOOST_AUTO_TEST_CASE(TwoActivatedMuscles)
 
       participant.readData( "Stretch_M2_Mesh","StretchM2SM", stretchVertexIDs, timestepSize, receivedStretch );
       participant.readData( "Stretch_M2_Mesh","StretchM1SM", stretchVertexIDs, timestepSize, receivedCrossedStretch );
-
-      // participant.writeData("Activation_M2_Mesh","Activation2", activationVertexIDs , activation2 );
+      std::cout << "activation in M2 = " << activation2[0] << std::endl;
+      participant.writeData("Activation_M2_Mesh","Activation2", activationVertexIDs , activation2 );
       BOOST_TEST(receivedStretch == stretch2, boost::test_tools::per_element());
       BOOST_TEST(receivedCrossedStretch == stretch1, boost::test_tools::per_element());
 
     }
-
-    std::cout << "Before advance" << std::endl;
     
     if (participant.requiresWritingCheckpoint()) {
     }

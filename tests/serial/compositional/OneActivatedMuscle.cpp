@@ -17,13 +17,12 @@ BOOST_AUTO_TEST_CASE(OneActivatedMuscle)
   precice::Participant participant(context.name, context.config(), context.rank, context.size);
 
   const std::vector<double> surfaceCoords{1, 0, 2, 0};
-  const std::vector<double> signalCoords{0, 0};
+  const std::vector<double> neuralCoords{0, 0};
 
   std::vector<int> surface1VertexIDs(2);
   std::vector<int> surface2VertexIDs(2);
   std::vector<int> activationVertexIDs(1);
   std::vector<int> stretchVertexIDs(1);
-  std::vector<int> crossStretchVertexIDs(1);
 
   double timestepSize = 1.0;
 
@@ -31,23 +30,23 @@ BOOST_AUTO_TEST_CASE(OneActivatedMuscle)
 
     participant.setMeshVertices("Surface_Mesh1", surfaceCoords , surface1VertexIDs );
 
-    participant.setMeshVertices("Activation_M1SM_Mesh", signalCoords , activationVertexIDs );
+    participant.setMeshVertices("Activation_M1SM_Mesh", neuralCoords , activationVertexIDs );
 
-    participant.setMeshVertices("Stretch_M1SM_Mesh", signalCoords , stretchVertexIDs );
+    participant.setMeshVertices("Stretch_M1SM_Mesh", neuralCoords , stretchVertexIDs );
 
   } else if (context.isNamed("M2SM")) {
 
     participant.setMeshVertices("Surface_Mesh2", surfaceCoords , surface2VertexIDs );
 
-    participant.setMeshVertices("Stretch_M2SM_Mesh", signalCoords , stretchVertexIDs );
+    participant.setMeshVertices("Stretch_M2SM_Mesh", neuralCoords , stretchVertexIDs );
 
   } else if (context.isNamed("M1")) {
 
-    participant.setMeshVertices("Stretch_M1_Mesh", signalCoords , stretchVertexIDs );
+    participant.setMeshVertices("Stretch_M1_Mesh", neuralCoords , stretchVertexIDs );
 
-    participant.setMeshVertices("Stretch_M1_Cross_Mesh", signalCoords , crossStretchVertexIDs );
+    participant.setMeshVertices("Stretch_M1_Cross_Mesh", neuralCoords , crossStretchVertexIDs );
 
-    participant.setMeshVertices("Activation_M1_Mesh", signalCoords , activationVertexIDs );
+    participant.setMeshVertices("Activation_M1_Mesh", neuralCoords , activationVertexIDs );
 
   } else {
     BOOST_TEST(context.isNamed("Tendon"));
