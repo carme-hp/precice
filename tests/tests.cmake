@@ -87,6 +87,7 @@ target_sources(testprecice
     tests/serial/compositional/TwoMusclesOneTendon.cpp
     tests/serial/compositional/TwoMusclesOneTendonActivated.cpp
     tests/serial/compositional/TwoMusclesOneTendonFeedback.cpp
+    tests/serial/compositional/TwoMusclesOneTendonCrossFeedback.cpp
     tests/serial/convergence-measures/helpers.cpp
     tests/serial/convergence-measures/helpers.hpp
     tests/serial/convergence-measures/testConvergenceMeasures1.cpp
