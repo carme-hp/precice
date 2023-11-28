@@ -83,6 +83,8 @@ target_sources(testprecice
     tests/serial/circular/Explicit.cpp
     tests/serial/circular/helper.hpp
     tests/serial/compositional/TwoActivatedMuscles.cpp
+    tests/serial/compositional/TwoActivatedMusclesImplicit.cpp
+    tests/serial/compositional/TwoActivatedMusclesImplicitActivated.cpp
     tests/serial/compositional/OneActivatedMuscle.cpp
     tests/serial/compositional/TwoMusclesOneTendon.cpp
     tests/serial/compositional/TwoMusclesOneTendonActivated.cpp
